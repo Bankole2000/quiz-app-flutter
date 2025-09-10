@@ -1,21 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:quiz_app/data/questions.dart';
+import 'package:quiz_app/questions_summary.dart';
 
 class ResultsScreen extends StatelessWidget {
-  const ResultsScreen({super.key, required this.chosenAnswers});
+  const ResultsScreen({
+    super.key,
+    required this.chosenAnswers,
+    required this.onRestart,
+  });
 
   final List<String> chosenAnswers;
+
+  final Function()? onRestart;
 
   List<Map<String, Object>> getSummaryData() {
     final List<Map<String, Object>> summary = [];
 
     for (var i = 0; i < questions.length; i++) {
       summary.add({
-        'questionIndex': i,
-        'questionText': questions[i].text,
-        'chosenAnswer': chosenAnswers[i],
-        'correctAnswer': questions[i].answers[0],
-        'userCorrect': questions[i].answers[0] == chosenAnswers[i],
+        'question_index': i,
+        'question': questions[i].text,
+        'user_answer': chosenAnswers[i],
+        'correct_answer': questions[i].answers[0],
+        'is_user_correct': questions[i].answers[0] == chosenAnswers[i],
       });
     }
 
@@ -24,6 +31,11 @@ class ResultsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final summaryData = getSummaryData();
+    final totalQuestions = questions.length;
+    final correctQuestions = summaryData
+        .where((data) => data['is_user_correct'] as bool)
+        .length;
     return SizedBox(
       width: double.infinity,
       child: Container(
@@ -33,16 +45,15 @@ class ResultsScreen extends StatelessWidget {
           // crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'You answered 3 out of 6 questiosn correctly!',
+              'You answered $correctQuestions out of $totalQuestions questions correctly!',
               style: TextStyle(color: Colors.white, fontSize: 24),
               textAlign: TextAlign.center,
             ),
-            SizedBox(
-              height: 500,
-              child: SingleChildScrollView(child: Column(children: [])),
-            ),
+            const SizedBox(height: 10),
+            QuestionsSummary(summaryData: summaryData),
+            const SizedBox(height: 10),
             TextButton.icon(
-              onPressed: () {},
+              onPressed: onRestart,
               icon: Icon(Icons.refresh, size: 24, color: Colors.white),
               label: Text(
                 'Restart Quiz',
