@@ -13,7 +13,9 @@ class ResultsScreen extends StatelessWidget {
 
   final Function()? onRestart;
 
-  List<Map<String, Object>> getSummaryData() {
+  // List<Map<String, Object>> getSummaryData() {
+  List<Map<String, Object>> get summaryData {
+    // We can use a getter instead of a function
     final List<Map<String, Object>> summary = [];
 
     for (var i = 0; i < questions.length; i++) {
@@ -31,7 +33,7 @@ class ResultsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final summaryData = getSummaryData();
+    // final summaryData = getSummaryData();
     final totalQuestions = questions.length;
     final correctQuestions = summaryData
         .where((data) => data['is_user_correct'] as bool)
